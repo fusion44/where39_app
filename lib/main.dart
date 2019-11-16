@@ -119,6 +119,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             options: MapOptions(
               center: _pos.latLng,
               zoom: 5.0,
+              minZoom: 2.0,
+              maxZoom: 19.0,
               onTap: (LatLng coords) {
                 _animatedMapMove(coords, _mapController.zoom);
                 setState(() {
