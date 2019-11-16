@@ -127,9 +127,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ),
             layers: [
               TileLayerOptions(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'],
+                // urlTemplate:
+                //     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                // subdomains: ['a', 'b', 'c'],
+                urlTemplate: "https://api.tiles.mapbox.com/v4/"
+                    "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
+                additionalOptions: {
+                  'accessToken': '',
+                  'id': 'mapbox.streets',
+                },
               ),
               MarkerLayerOptions(
                 markers: _showMarker
