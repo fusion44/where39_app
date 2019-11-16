@@ -59,12 +59,52 @@ class Where39Position {
   }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   final MapController _mapController = MapController();
   bool _showMarker = false;
   Where39Position _pos = Where39Position.fromCoords(
     LatLng(52.49303704, 13.41792593),
   );
+
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    final _latTween = Tween<double>(
+      begin: _mapController.center.latitude,
+      end: destLocation.latitude,
+    );
+    final _lngTween = Tween<double>(
+      begin: _mapController.center.longitude,
+      end: destLocation.longitude,
+    );
+    final _zoomTween = Tween<double>(
+      begin: _mapController.zoom,
+      end: destZoom,
+    );
+
+    var controller = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+    Animation<double> animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.fastOutSlowIn,
+    );
+
+    controller.addListener(() {
+      _mapController.move(
+          LatLng(_latTween.evaluate(animation), _lngTween.evaluate(animation)),
+          _zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
               center: _pos.latLng,
               zoom: 5.0,
               onTap: (LatLng coords) {
+                _animatedMapMove(coords, _mapController.zoom);
                 setState(() {
                   _showMarker = true;
                   _pos.latLng = coords;
