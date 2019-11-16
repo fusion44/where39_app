@@ -1,5 +1,7 @@
 import 'package:dart_where39/where39.dart';
+import 'package:dart_where39/word_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
 
@@ -65,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Where39Position _pos = Where39Position.fromCoords(
     LatLng(52.49303704, 13.41792593),
   );
+  List<String> _inputWords = const [];
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
     final _latTween = Tween<double>(
@@ -169,14 +172,75 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             right: 8.0,
             child: FloatingActionButton(
               child: Icon(Icons.search),
-              onPressed: () {
-                print("search");
-              },
+              onPressed: _showDialog,
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _onChipsInput(List<dynamic> words) {
+    _inputWords = words.cast<String>();
+  }
+
+  void _showDialog() async {
+    bool result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          content: ChipsInput(
+            initialValue: [],
+            decoration: InputDecoration(
+              labelText: "Select Words",
+            ),
+            maxChips: 5,
+            findSuggestions: (String query) {
+              if (query.length != 0) {
+                return wordList
+                    .where((word) => word.startsWith(query))
+                    .toList(growable: false);
+              } else {
+                return const [];
+              }
+            },
+            onChanged: _onChipsInput,
+            chipBuilder: (context, state, word) {
+              return InputChip(
+                key: ObjectKey(word),
+                label: Text(word),
+                onDeleted: () => state.deleteChip(word),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              );
+            },
+            suggestionBuilder: (context, state, word) {
+              return ListTile(
+                key: ObjectKey(word),
+                title: Text(word),
+                onTap: () => state.selectSuggestion(word),
+              );
+            },
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Go!"),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null && result) {
+      setState(() {
+        _showMarker = true;
+        _pos.words = _inputWords;
+        _animatedMapMove(_pos.latLng, _mapController.zoom);
+      });
+    }
   }
 }
 
