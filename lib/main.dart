@@ -1,9 +1,11 @@
-import 'package:dart_where39/where39.dart';
 import 'package:dart_where39/word_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
+
+import 'where39_position.dart';
+import 'widgets/marker_widget.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,40 +27,6 @@ class MyHomePage extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
-}
-
-class Where39Position {
-  final Where39 _w39 = Where39();
-  LatLng _latLng = LatLng(52.49303704, 13.41792593); // Default Room77
-  List<String> _words = ['slush', 'extend', 'until', 'layer', 'arch'];
-
-  Where39Position.fromCoords(LatLng coords) {
-    latLng = coords;
-  }
-
-  Where39Position.fromWords(List<String> wordList) {
-    if (wordList.length > 5) {
-      throw new ArgumentError('Length must not exceed 5');
-    }
-    words = wordList;
-  }
-
-  LatLng get latLng => _latLng;
-  set latLng(LatLng latLng) {
-    _latLng = latLng;
-    _words = _w39.toWords(latLng);
-  }
-
-  List<String> get words => _words;
-  set words(List<String> words) {
-    _words = words;
-    _latLng = _w39.fromWords(words);
-  }
-
-  @override
-  String toString() {
-    return '$_words // $_latLng';
-  }
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
@@ -142,31 +110,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   'id': 'mapbox.streets',
                 },
               ),
-              MarkerLayerOptions(
-                markers: _showMarker
-                    ? [
-                        Marker(
-                          width: 280.0,
-                          height: 160.0,
-                          anchorPos: AnchorPos.align(AnchorAlign.top),
-                          point: _pos.latLng,
-                          builder: (ctx) => Container(
-                            child: MarkerWidget(
-                              _pos,
-                              onClose: () {
-                                setState(() {
-                                  _showMarker = false;
-                                });
-                              },
-                              onShare: () {
-                                print("share");
-                              },
-                            ),
-                          ),
-                        )
-                      ]
-                    : const [],
-              ),
+              _buildMarkerLayerOptions(),
             ],
           ),
           Positioned(
@@ -179,6 +123,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+
+  MarkerLayerOptions _buildMarkerLayerOptions() {
+    return MarkerLayerOptions(
+      markers: _showMarker
+          ? [
+              Marker(
+                width: 280.0,
+                height: 160.0,
+                anchorPos: AnchorPos.align(AnchorAlign.top),
+                point: _pos.latLng,
+                builder: (ctx) => Container(
+                  child: MarkerWidget(
+                    _pos,
+                    onClose: () {
+                      setState(() {
+                        _showMarker = false;
+                      });
+                    },
+                    onShare: () {
+                      print("share");
+                    },
+                  ),
+                ),
+              )
+            ]
+          : const [],
     );
   }
 
@@ -243,71 +215,5 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         _animatedMapMove(_pos.latLng, _mapController.zoom);
       });
     }
-  }
-}
-
-class MarkerWidget extends StatelessWidget {
-  final Where39Position _pos;
-  final Function onClose;
-  final Function onShare;
-  MarkerWidget(this._pos, {@required this.onClose, this.onShare});
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-    LatLng rounded = _pos.latLng.round(decimals: 6);
-    return Stack(
-      children: <Widget>[
-        // Opacity(
-        //   opacity: 0.2,
-        //   child: Container(
-        //     color: Colors.red,
-        //   ),
-        // ),
-        Container(
-          width: 280,
-          height: 120,
-          child: Card(
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 30.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    _pos.words.toString(),
-                    style: theme.textTheme.body2.copyWith(fontSize: 20.0),
-                  ),
-                  Divider(),
-                  Text('lat: ${rounded.latitude}'),
-                  Text('lng: ${rounded.longitude}'),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Icon(Icons.gps_fixed, size: 25, color: Colors.black),
-        ),
-        Positioned(
-          right: 0.0,
-          child: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: onClose,
-          ),
-        ),
-        onShare != null
-            ? Positioned(
-                bottom: 40.0,
-                right: 0.0,
-                child: IconButton(
-                  icon: Icon(Icons.share),
-                  onPressed: onShare,
-                ),
-              )
-            : Container(),
-      ],
-    );
   }
 }
