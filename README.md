@@ -1,16 +1,48 @@
-# where39
+# Where 39
 
-A new Flutter project.
+A simple mapping application that uses words to instead of latitude and longitudes.
 
-## Getting Started
+Original: https://where39.com / [source](https://github.com/arcbtc/where39)
 
-This project is a starting point for a Flutter application.
+## Building
 
-A few resources to get you started if this is your first Flutter project:
+You can follow these instructions to build the app
+and install it onto your device.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+### Prerequisites
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+If you are new to Flutter, please first follow
+the [Flutter Setup](https://flutter.dev/setup/) guide.
+
+### Building and installing the Flutter app
+
+* `cd repository_root/example`
+* `flutter pub get`
+* `flutter run --release`
+
+The `flutter run --release` command both builds and installs the app.
+
+## Issues
+File any issues to the [github issue tracker](https://github.com/fusion44/where39_app/issues)
+
+## Contributing
+
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
+
+## Screenshots
+![Unshuffled seed](/screenshots/marker_unshuffled.png)
+![Shuffled seed](/screenshots/marker_shuffled.png)
+![Shuffling](/screenshots/shuffle1.png)
+![Word entry](/screenshots/word_entry1.png)
+
+## Icon
+
+Android launcher icons were generated using Android Asset Studio:
+https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html
+
+## License 
+See [LICENSE](https://github.com/fusion44/where39_app/blob/master/LICENSE) file (GNU General Public License v3.0)
