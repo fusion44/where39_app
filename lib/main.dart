@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chips_input/flutter_chips_input.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
+import 'package:share/share.dart';
 
 import 'where39_position.dart';
 import 'widgets/marker_widget.dart';
@@ -164,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       });
                     },
                     onShare: () {
-                      print("share");
+                      Share.share(_pos.words.toString());
                     },
                   ),
                 ),

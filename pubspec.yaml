@@ -24,6 +24,8 @@ dependencies:
   dart_where39:
     path: ../dart_where39/
   flutter_chips_input: ^1.6.0
+  share: ^0.6.3+1
+  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
