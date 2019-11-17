@@ -74,9 +74,9 @@ packages:
   dart_where39:
     dependency: "direct main"
     description:
-      path: "../dart_where39"
-      relative: true
-    source: path
+      name: dart_where39
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "1.0.0"
   flutter:
     dependency: "direct main"
