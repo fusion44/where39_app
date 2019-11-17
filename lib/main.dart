@@ -36,6 +36,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     LatLng(52.49303704, 13.41792593),
   );
   List<String> _inputWords = const [];
+  int _shuffle = 1;
+  TextEditingController _shuffleValController =
+      TextEditingController(text: '1');
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
     final _latTween = Tween<double>(
@@ -118,9 +121,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             right: 8.0,
             child: FloatingActionButton(
               child: Icon(Icons.search),
-              onPressed: _showDialog,
+              onPressed: _buildSearchDialog,
             ),
           ),
+          Positioned(
+            right: 8.0,
+            top: 40.0,
+            child: RaisedButton(
+              elevation: 10,
+              child: Row(
+                children: <Widget>[
+                  _shuffle > 1 ? Text(_shuffle.toString()) : Text('default'),
+                  SizedBox(width: 8.0),
+                  Icon(Icons.shuffle),
+                ],
+              ),
+              onPressed: () {
+                _buildShuffleDialog();
+              },
+            ),
+          )
         ],
       ),
     );
@@ -158,11 +178,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _inputWords = words.cast<String>();
   }
 
-  void _showDialog() async {
+  void _buildSearchDialog() async {
     bool result = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           content: ChipsInput(
             initialValue: [],
@@ -214,6 +233,55 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         _pos.words = _inputWords;
         _animatedMapMove(_pos.latLng, _mapController.zoom);
       });
+    }
+  }
+
+  void _buildShuffleDialog() async {
+    String result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter shuffle value'),
+          content: TextField(
+            controller: _shuffleValController,
+            keyboardType: TextInputType.numberWithOptions(
+              decimal: false,
+              signed: false,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('RESET'),
+              onPressed: () {
+                Navigator.of(context).pop('reset');
+              },
+            ),
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop('ok');
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null && result == 'ok') {
+      // User clicked OK -> set new value
+      setState(() {
+        _shuffle = int.parse(_shuffleValController.text);
+        _pos.shuffle(_shuffle);
+      });
+    } else if (result != null && result == 'reset') {
+      setState(() {
+        _shuffleValController.text = '1';
+        _shuffle = 1;
+        _pos.shuffle(_shuffle);
+      });
+    } else {
+      // User aborted -> reset any changes he may have done
+      _shuffleValController.text = _shuffle.toString();
     }
   }
 }

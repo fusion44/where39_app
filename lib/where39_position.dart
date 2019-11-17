@@ -17,6 +17,11 @@ class Where39Position {
     words = wordList;
   }
 
+  void shuffle(int shuffleValue) {
+    _w39.shuffle = shuffleValue;
+    _words = _w39.toWords(_latLng);
+  }
+
   LatLng get latLng => _latLng;
   set latLng(LatLng latLng) {
     _latLng = latLng;
